@@ -34,7 +34,7 @@
 	function init (converter) {
 		function api (key, value, attributes) {
 			var result;
-
+			const isBrowser = typeof window !== 'undefined';
 			// Write
 
 			if (arguments.length > 1) {
@@ -65,7 +65,9 @@
 				key = encodeURIComponent(String(key));
 				key = key.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent);
 				key = key.replace(/[\(\)]/g, escape);
-
+				if(!isBrowser){
+					return '';
+				}
 				return (document.cookie = [
 					key, '=', value,
 					attributes.expires && '; expires=' + attributes.expires.toUTCString(), // use expires attribute, max-age is not supported by IE
@@ -84,7 +86,10 @@
 			// To prevent the for loop in the first place assign an empty array
 			// in case there are no cookies at all. Also prevents odd result when
 			// calling "get()"
-			var cookies = document.cookie ? document.cookie.split('; ') : [];
+			var cookies =[];
+			if(isBrowser){
+				document.cookie ? document.cookie.split('; ') : [];
+			}
 			var rdecode = /(%[0-9A-Z]{2})+/g;
 			var i = 0;
 
